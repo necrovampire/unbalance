@@ -1,4 +1,6 @@
-  program Unbalance;
+compiler_options _use_cstyle_matrix;
+program Unbalance;
+        
 const
      dbPath = "db/config.db";
 end
@@ -23,16 +25,15 @@ typedef
     end
     
     type __control
-        __direccional direccional;
-        __ botones botones;
+        __direcional direccional;
+        __botones botones;
     end
-
 end
 
 global
-  int DBHanlder;
-  __control jugador;
-end
+    int DBHandlder;
+  __control controlJugador;
+
 
 BEGIN
     setearPantalla();
@@ -51,14 +52,18 @@ END
 
 function int prerararDB()
 BEGIN
+  if(DBHandler != 0)
+      return DBHandler;
+  end
   existeArchivo(dbPath, "No Existe la base de datos.");
-  if (!DBHanlder = db_open(dbPath, dbms_sqlite, db_readonly))
+  if (!DBHandlder = db_open(dbPath, dbms_sqlite, db_readonly))
     exit("Error al conectar a la base de datos");
   end
-  return DBHanlder;
+  return DBHandlder;
 END
 
 function consultarDB(pointer DBQuery, pointer DBResult, string query)
+//DBHandler = variable global
 BEGIN
   DBHandler = prerararDB();
   &DBQuery = db_query(DBHandler, query, false);
@@ -66,10 +71,8 @@ BEGIN
 END
 
 function __screen consultarResolcionEnDB(string query)
-         //dbquery deberia estas solo en otra funcion?
     private
         __screen screen;
-        int DBHandler;
         int DBQuery;
         int DBResult;
         string dbPath;
@@ -85,15 +88,8 @@ END
 
 function __screen obtenerResolucion()
 //arma la query y devuelve la resolucion.
-
 BEGIN
-  query =   "select r.width,
-            r. height,
-            r.bpp,
-            r.flagsmode
-            from resolution r
-            inner join config c
-            on c.resolution = r.id";
+  query = "select r.width, r. height, r.bpp, r.flagsmode from resolution r inner join config c on c.resolution = r.id";
  
   return consultarResolcionEnDB(string query);
 END
